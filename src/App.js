@@ -1,43 +1,39 @@
-import React, { useState, useRef, useEffect } from "react";
-import TodoList from "./TodoList";
-import { v4 as uuidv4 } from 'uuid'
-
-const LOCAL_STORAGE_KEY = 'todoApp.todos'
+import Home from './Home';
+import BlogDetails from './BlogDetails';
+import Navbar from './Navbar';
+import Create from './Create';
+import NotFound from './404';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 function App() {
-  const [todos, setTodos] = useState([])
-  const todoNameRef = useRef()
-
-  useEffect(() => {
-    const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
-    if (storedTodos) {
-      setTodos(storedTodos)
-    }
-  }, [])
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos))
-  })
-
-  function handleAddTodo(e) {
-    const name = todoNameRef.current.value
-    if (name === '') {
-      return
-    }
-    setTodos(prevTodos => {
-      return [...prevTodos, { id: uuidv4(), name: name, complete: false }]
-    })
-    todoNameRef.current.value = null
-  }
-
+  // root component
   return (
-    <>
-      <TodoList todos={todos} />
-      <input ref={todoNameRef} type="text" />
-      <button onClick={handleAddTodo}>Add Todo</button>
-      <button>Clear Complete</button>
-      <div>0 left to do.</div>
-    </>
-  )
+    <Router>
+      <div className="App">
+        {/* child component */}
+        <Navbar></Navbar>
+        <div className="content">
+          <Switch>
+            <Route exact path="/">
+              <Home></Home>
+            </Route>
+
+            <Route exact path="/create">
+              <Create></Create>
+            </Route>
+
+            <Route path="/blogs/:id">
+              <BlogDetails></BlogDetails>
+            </Route>
+
+            <Route path="*">
+              <NotFound></NotFound>
+            </Route>
+          </Switch>
+        </div>
+      </div>
+    </Router>
+  );
 }
 
 export default App;
